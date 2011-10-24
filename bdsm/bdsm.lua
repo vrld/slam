@@ -44,10 +44,17 @@ local function remove_stopped(sources)
 	end
 end
 
+local function get_what(what)
+	if type(what) == 'table' then
+		return what[math.random(1,#what)]
+	end
+	return what
+end
+
 local play_instance, stop_instance
 function Source:play()
 	remove_stopped(self.instances)
-	local instance = newInstance(self.what, self.how)
+	local instance = newInstance(get_what(self.what), self.how)
 
 	-- overwrite instance:stop() and instance:play()
 	if not (play_instance and stop_instance) then
@@ -103,7 +110,7 @@ for _, property in ipairs{'looping', 'pitch', 'volume'} do
 	Source['set' .. name] = function(self, val)
 		self[property] = val
 		for s in pairs(self.instances) do
-			s['set' .. name](self, val)
+			s['set' .. name](s, val)
 		end
 	end
 end
