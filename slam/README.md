@@ -1,8 +1,8 @@
 SLAM
 ====
-... is the **Simple [LÖVE] Audio Manager** formerly known as the
+... is the **Simple [LOVE] Audio Manager** formerly known as the
 **Benignly Designed Sound Manager.** It's a minimally invasive
-augmentation of [LÖVE]'s audio module. In contrast to sources that
+augmentation of [LOVE]'s audio module. In contrast to sources that
 can only have one simultaneous playing instance, SLAM sources
 create *instances* when played. This way you can play one source
 multiple times at once. Each instance will inherit the settings
@@ -75,12 +75,12 @@ Returns `true` if the source is static, `false` otherwise.
     source:setVolume(volume)
 
 Sets properties for all instances. Affects playing instances immediately. For details
-on the parameters, see the [LÖVE wiki](http://love2d.org/wiki/Source).
+on the parameters, see the [LOVE wiki](http://love2d.org/wiki/Source).
 
 
 ### Instances
 
-All functions that affect LÖVE Sources can be applied to SLAM instances. These are:
+All functions that affect LOVE Sources can be applied to SLAM instances. These are:
 
     love.audio.pause(instance)
     instance:pause()
@@ -113,7 +113,7 @@ All functions that affect LÖVE Sources can be applied to SLAM instances. These a
     instance:isLooping()
     instance:setLooping()
 
-See the [LÖVE wiki](http://love2d.org/wiki/Source) for details.
+See the [LOVE wiki](http://love2d.org/wiki/Source) for details.
 
 
 ### Tags
@@ -152,4 +152,4 @@ Remove one or more tags from a source.
 Calls `FUNCTION` on all sources tagged with `TAG`.
 
 
-[LÖVE]: http://love2d.org
+[LOVE]: http://love2d.org
