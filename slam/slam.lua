@@ -97,7 +97,7 @@ function Source:removeTags(tag, ...)
 end
 
 function Source:isStatic()
-	return how ~= "stream"
+	return self.how ~= "stream"
 end
 
 -- getter/setter for looping, pitch and volume
@@ -128,6 +128,9 @@ function love.audio.newSource(what, how)
 		pitch     = 1,
 		volume    = 1,
 	}
+	if how == 'static' and type(what) == 'string' then
+		s.what = love.sound.newSoundData(what)
+	end
 	love.audio.tags.all[s] = s
 	return setmetatable(s, Source)
 end
