@@ -1,16 +1,14 @@
 SLAM
 ====
-... is the **Simple [LOVE] Audio Manager** formerly known as the
-**Benignly Designed Sound Manager.** It's a minimally invasive
-augmentation of [LOVE]'s audio module. In contrast to sources that
-can only have one simultaneous playing instance, SLAM sources
-create *instances* when played. This way you can play one source
-multiple times at once. Each instance will inherit the settings
-(volume, speed, looping, ...) of it's SLAM source, but can
-override them.
+... is the **Simple [LOVE] Audio Manager** formerly known as the **Benignly
+Designed Sound Manager.** It's a minimally invasive augmentation of [LOVE]'s
+audio module. In contrast to sources that can only have one simultaneous
+playing instance, SLAM sources create *instances* when played. This way you can
+play one source multiple times at once. Each instance will inherit the settings
+(volume, speed, looping, ...) of it's SLAM source, but can override them.
 
-SLAM also features tags, which can be used to modify a number of
-sources at the same time.
+SLAM also features tags, which can be used to modify a number of sources at the
+same time.
 
 Example
 -------
@@ -39,16 +37,17 @@ Reference
     source = love.audio.newSource(what, how)
 
 Returns a new SLAM source. Accepts the same parameters as
-[love.audio.newSource](http://love2d.org/wiki/love.audio.newSource), with one major
-difference: `what` can be a table, in which case each new playing instance will
-pick an item of that table at random.
+[love.audio.newSource](http://love2d.org/wiki/love.audio.newSource), with one
+major difference: `what` can be a table, in which case each new playing
+instance will pick an item of that table at random.
 
 
     instance = love.audio.play(source)
     instance = source:play()
 
-Plays a source and returns a handle to the player instance. Instances will inherit
-the settings (looping, pitch, volume) of `source`.
+Plays a source, removes all paused instances and returns a handle to the player
+instance. Instances will inherit the settings (looping, pitch, volume) of
+`source`.
 
 
     love.audio.stop(source)
@@ -60,6 +59,17 @@ Stops all playing instances of a source.
     love.audio.stop()
 
 Stops all playing instances.
+
+
+    source:pause()
+
+Pauses all playing instances of a source.
+
+
+    source:resume()
+
+Resumes all paused instances of a source. **Note:** source:play() clears paused
+instances from a paused source.
 
 
     source:isStatic()
@@ -74,13 +84,14 @@ Returns `true` if the source is static, `false` otherwise.
     volume = source:getVolume()
     source:setVolume(volume)
 
-Sets properties for all instances. Affects playing instances immediately. For details
-on the parameters, see the [LOVE wiki](http://love2d.org/wiki/Source).
+Sets properties for all instances. Affects playing instances immediately. For
+details on the parameters, see the [LOVE wiki](http://love2d.org/wiki/Source).
 
 
 ### Instances
 
-All functions that affect LOVE Sources can be applied to SLAM instances. These are:
+All functions that affect LOVE Sources can be applied to SLAM instances. These
+are:
 
     love.audio.pause(instance)
     instance:pause()
@@ -118,8 +129,8 @@ See the [LOVE wiki](http://love2d.org/wiki/Source) for details.
 
 ### Tags
 
-With tags you can group several sources together and call functions upon them. A
-simple example might be this:
+With tags you can group several sources together and call functions upon them.
+A simple example:
 
     -- add some stuff to the background tag
     drums:addTags('music')
@@ -138,7 +149,8 @@ simple example might be this:
 
     source:addTags(tag, ...)
 
-Adds one or more tags to a source. By default, all sources are member of the tag `all`.
+Adds one or more tags to a source. By default, all sources are member of the
+tag `all`.
 
 
     source:removeTags(tag, ...)

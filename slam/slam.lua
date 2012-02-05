@@ -32,7 +32,7 @@ local stop = love.audio.stop
 ------------------
 local Source = {}
 Source.__index = Source
-Source.__newindex = error
+Source.__newindex = function(_,k) error(('Cannot write key %s'):format(tostring(k))) end
 
 local function remove_stopped(sources)
 	local remove = {}
@@ -44,17 +44,18 @@ local function remove_stopped(sources)
 	end
 end
 
-local function get_what(what)
-	if type(what) == 'table' then
-		return what[math.random(1,#what)]
+local function get_target(target)
+	if type(target) == 'table' then
+		return target[math.random(1,#target)]
 	end
-	return what
+	return target
 end
 
 local play_instance, stop_instance
 function Source:play()
 	remove_stopped(self.instances)
-	local instance = newInstance(get_what(self.what), self.how)
+	if self._paused then self:stop() end
+	local instance = newInstance(get_target(self.target), self.how)
 
 	-- overwrite instance:stop() and instance:play()
 	if not (play_instance and stop_instance) then
@@ -81,7 +82,24 @@ function Source:stop()
 	for s in pairs(self.instances) do
 		s:stop()
 	end
+	self._paused = false
 	self.instances = {}
+end
+
+function Source:pause()
+	if self._paused then return end
+	for s in pairs(self.instances) do
+		s:pause()
+	end
+	self._paused = true
+end
+
+function Source:resume()
+	if not self._paused then return end
+	for s in pairs(self.instances) do
+		s:resume()
+	end
+	self._paused = false
 end
 
 function Source:addTags(tag, ...)
@@ -119,29 +137,30 @@ Source.isLooping = Source.getLooping
 --------------------------
 -- love.audio interface --
 --------------------------
-function love.audio.newSource(what, how)
+function love.audio.newSource(target, how)
 	local s = {
-		what      = what,
+		_paused   = false,
+		target    = target,
 		how       = how,
 		instances = {},
 		looping   = false,
 		pitch     = 1,
 		volume    = 1,
 	}
-	if how == 'static' and type(what) == 'string' then
-		s.what = love.sound.newSoundData(what)
+	if how == 'static' and type(target) == 'string' then
+		s.target = love.sound.newSoundData(target)
 	end
 	love.audio.tags.all[s] = s
 	return setmetatable(s, Source)
 end
 
-function love.audio.play(what)
-	assert(what and what.instances, "Can only play source objects.")
-	return what:play()
+function love.audio.play(source)
+	assert(source and source.instances, "Can only play source objects.")
+	return source:play()
 end
 
-function love.audio.stop(what)
-	if what and what.stop then return what:stop() end
+function love.audio.stop(source)
+	if source and source.stop then return source:stop() end
 	stop()
 end
 
