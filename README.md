@@ -12,78 +12,79 @@ same time.
 
 Example
 -------
+```lua
+require 'slam'
+function love.load()
+    music = love.audio.newSource('music.ogg', 'stream') -- creates a new SLAM source
+    music:setLooping(true)                              -- all instances will be looping
+    music:setVolume(.3)                                 -- set volume for all instances
+    love.audio.play(music)                              -- play music
 
-    require 'slam'
-    function love.load()
-        music = love.audio.newSource('music.ogg', 'stream') -- creates a new SLAM source
-        music:setLooping(true)                              -- all instances will be looping
-        music:setVolume(.3)                                 -- set volume for all instances
-        love.audio.play(music)                              -- play music
-        
-        woosh = love.audio.newSource({'woosh1.ogg', 'woosh2.ogg'}, 'static')
-    end
     
-    function love.keypressed()
-        local instance = woosh:play()                       -- creates a new instance
-        instance:setPitch(.5 + math.random() * .5)          -- set pitch for this instance only
-    end
+    woosh = love.audio.newSource({'woosh1.ogg', 'woosh2.ogg'}, 'static')
+end
 
+function love.keypressed()
+    local instance = woosh:play()                       -- creates a new instance
+    instance:setPitch(.5 + math.random() * .5)          -- set pitch for this instance only
+end
+```
 
 Reference
 ---------
 
 ### Operations on Sources
-
-    source = love.audio.newSource(what, how)
-
+```lua
+source = love.audio.newSource(what, how)
+```
 Returns a new SLAM source. Accepts the same parameters as
 [love.audio.newSource](http://love2d.org/wiki/love.audio.newSource), with one
 major difference: `what` can be a table, in which case each new playing
 instance will pick an item of that table at random.
 
-
-    instance = love.audio.play(source)
-    instance = source:play()
-
+```lua
+instance = love.audio.play(source)
+instance = source:play()
+```
 Plays a source, removes all paused instances and returns a handle to the player
 instance. Instances will inherit the settings (looping, pitch, volume) of
 `source`.
 
-
-    love.audio.stop(source)
-    source:stop()
-
+```lua
+love.audio.stop(source)
+source:stop()
+```
 Stops all playing instances of a source.
 
-
-    love.audio.stop()
-
+```lua
+love.audio.stop()
+```
 Stops all playing instances.
 
-
-    source:pause()
-
+```lua
+source:pause()
+```
 Pauses all playing instances of a source.
 
-
-    source:resume()
-
+```lua
+source:resume()
+```
 Resumes all paused instances of a source. **Note:** source:play() clears paused
 instances from a paused source.
 
-
-    source:isStatic()
-
+```lua
+source:isStatic()
+```
 Returns `true` if the source is static, `false` otherwise.
 
-
-    looping = source:isLooping()
-    source:setLooping(looping)
-    pitch = source:getPitch()
-    source:setPitch(pitch)
-    volume = source:getVolume()
-    source:setVolume(volume)
-
+```lua
+looping = source:isLooping()
+source:setLooping(looping)
+pitch = source:getPitch()
+source:setPitch(pitch)
+volume = source:getVolume()
+source:setVolume(volume)
+```
 Sets properties for all instances. Affects playing instances immediately. For
 details on the parameters, see the [LOVE wiki](http://love2d.org/wiki/Source).
 
@@ -92,38 +93,38 @@ details on the parameters, see the [LOVE wiki](http://love2d.org/wiki/Source).
 
 All functions that affect LOVE Sources can be applied to SLAM instances. These
 are:
+```lua
+love.audio.pause(instance)
+instance:pause()
+instance:isPaused()
 
-    love.audio.pause(instance)
-    instance:pause()
-    instance:isPaused()
-    
-    love.audio.play(instance)
-    instance:play()
-    
-    love.audio.resume(instance)
-    instance:resume()
-    
-    love.audio.rewind(instance)
-    instance:rewind()
-    
-    instance:getDirection()
-    instance:setDirection()
-    
-    instance:getPitch()
-    instance:setPitch()
-    
-    instance:getPosition()
-    instance:setPosition()
-    
-    instance:getVelocity()
-    instance:setVelocity()
-    
-    instance:getVolume()
-    instance:setVolume()
-    
-    instance:isLooping()
-    instance:setLooping()
+love.audio.play(instance)
+instance:play()
 
+love.audio.resume(instance)
+instance:resume()
+
+love.audio.rewind(instance)
+instance:rewind()
+
+instance:getDirection()
+instance:setDirection()
+
+instance:getPitch()
+instance:setPitch()
+
+instance:getPosition()
+instance:setPosition()
+
+instance:getVelocity()
+instance:setVelocity()
+
+instance:getVolume()
+instance:setVolume()
+
+instance:isLooping()
+instance:setLooping()
+```
 See the [LOVE wiki](http://love2d.org/wiki/Source) for details.
 
 
@@ -131,36 +132,36 @@ See the [LOVE wiki](http://love2d.org/wiki/Source) for details.
 
 With tags you can group several sources together and call functions upon them.
 A simple example:
+```lua
+-- add some stuff to the background tag
+drums:addTags('music')
+baseline:addTags('background', 'music') -- a source can have multiple tags
+muttering:addTags('background')
+noise:addTags('background')
+cars:addTags('background')
 
-    -- add some stuff to the background tag
-    drums:addTags('music')
-    baseline:addTags('background', 'music') -- a source can have multiple tags
-    muttering:addTags('background')
-    noise:addTags('background')
-    cars:addTags('background')
-    
-    (...)
-    
-    love.audio.tags.background.setVolume(0) -- mute all background sounds
-    love.audio.tags.music.setVolume(.1)     -- ... but keep the music alive
+-- (...)
 
+love.audio.tags.background.setVolume(0) -- mute all background sounds
+love.audio.tags.music.setVolume(.1)     -- ... but keep the music alive
+```
 
 #### Functions
-
-    source:addTags(tag, ...)
-
+```lua
+source:addTags(tag, ...)
+```
 Adds one or more tags to a source. By default, all sources are member of the
 tag `all`.
 
-
-    source:removeTags(tag, ...)
-
+```lua
+source:removeTags(tag, ...)
+```
 Remove one or more tags from a source.
 
-
-    love.audio.tags.TAG.FUNCTION(...)
-    love.audio.tags[TAG].FUNCTION(...)
-
+```lua
+love.audio.tags.TAG.FUNCTION(...)
+love.audio.tags[TAG].FUNCTION(...)
+```
 Calls `FUNCTION` on all sources tagged with `TAG`.
 
 
