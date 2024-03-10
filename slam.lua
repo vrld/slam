@@ -1,4 +1,4 @@
--- Simple LÖVE Audio Manager
+-- Simple Lï¿½VE Audio Manager
 --
 -- Copyright (c) 2011 Matthias Richter
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +32,7 @@ local stop = love.audio.stop
 ------------------
 local Source = {}
 Source.__index = Source
-Source.__newindex = function(_,k) error(('Cannot write key %s'):format(tostring(k))) end
+Source.__newindex = function(_, k) error(('Cannot write key %s'):format(tostring(k))) end
 
 local function remove_stopped(sources)
 	local remove = {}
@@ -46,7 +46,7 @@ end
 
 local function get_target(target)
 	if type(target) == 'table' then
-		return target[math.random(1,#target)]
+		return target[math.random(1, #target)]
 	end
 	return target
 end
@@ -119,8 +119,8 @@ function Source:isStatic()
 end
 
 -- getter/setter for looping, pitch and volume
-for _, property in ipairs{'looping', 'pitch', 'volume'} do
-	local name = property:sub(1,1):upper() .. property:sub(2)
+for _, property in ipairs { 'looping', 'pitch', 'volume' } do
+	local name = property:sub(1, 1):upper() .. property:sub(2)
 	Source['get' .. name] = function(self)
 		return self[property]
 	end
@@ -133,6 +133,17 @@ for _, property in ipairs{'looping', 'pitch', 'volume'} do
 	end
 end
 Source.isLooping = Source.getLooping
+
+-- returns true if at least a single source instance is playing
+function Source:isPlaying()
+	local playing = false
+	for s in pairs(self.instances) do
+		if s:isPlaying() then
+			playing = true
+		end
+	end
+	return playing
+end
 
 --------------------------
 -- love.audio interface --
@@ -180,7 +191,7 @@ end
 
 love.audio.tags = setmetatable({}, {
 	__newindex = error,
-	__index = function(t,k)
+	__index = function(t, k)
 		local tag = setmetatable({}, Tag)
 		rawset(t, k, tag)
 		return tag
