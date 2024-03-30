@@ -1,4 +1,4 @@
--- Simple LÖVE Audio Manager
+-- Simple LÃ–VE Audio Manager
 --
 -- Copyright (c) 2011 Matthias Richter
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +32,9 @@ local stop = love.audio.stop
 ------------------
 local Source = {}
 Source.__index = Source
-Source.__newindex = function(_,k) error(('Cannot write key %s'):format(tostring(k))) end
+Source.__newindex = function(_, k)
+	error(("Cannot write key %s"):format(tostring(k)))
+end
 
 local function remove_stopped(sources)
 	local remove = {}
@@ -45,8 +47,8 @@ local function remove_stopped(sources)
 end
 
 local function get_target(target)
-	if type(target) == 'table' then
-		return target[math.random(1,#target)]
+	if type(target) == "table" then
+		return target[math.random(1, #target)]
 	end
 	return target
 end
@@ -54,7 +56,9 @@ end
 local play_instance, stop_instance
 function Source:play()
 	remove_stopped(self.instances)
-	if self._paused then self:stop() end
+	if self._paused then
+		self:stop()
+	end
 	local instance = newInstance(get_target(self.target), self.how)
 
 	-- overwrite instance:stop() and instance:play()
@@ -87,7 +91,9 @@ function Source:stop()
 end
 
 function Source:pause()
-	if self._paused then return end
+	if self._paused then
+		return
+	end
 	for s in pairs(self.instances) do
 		s:pause()
 	end
@@ -95,7 +101,9 @@ function Source:pause()
 end
 
 function Source:resume()
-	if not self._paused then return end
+	if not self._paused then
+		return
+	end
 	for s in pairs(self.instances) do
 		s:resume()
 	end
@@ -103,13 +111,17 @@ function Source:resume()
 end
 
 function Source:addTags(tag, ...)
-	if not tag then return end
+	if not tag then
+		return
+	end
 	love.audio.tags[tag][self] = self
 	return Source.addTags(self, ...)
 end
 
 function Source:removeTags(tag, ...)
-	if not tag then return end
+	if not tag then
+		return
+	end
 	love.audio.tags[tag][self] = nil
 	return Source.removeTags(self, ...)
 end
@@ -119,35 +131,46 @@ function Source:isStatic()
 end
 
 -- getter/setter for looping, pitch and volume
-for _, property in ipairs{'looping', 'pitch', 'volume'} do
-	local name = property:sub(1,1):upper() .. property:sub(2)
-	Source['get' .. name] = function(self)
+for _, property in ipairs({ "looping", "pitch", "volume" }) do
+	local name = property:sub(1, 1):upper() .. property:sub(2)
+	Source["get" .. name] = function(self)
 		return self[property]
 	end
 
-	Source['set' .. name] = function(self, val)
+	Source["set" .. name] = function(self, val)
 		self[property] = val
 		for s in pairs(self.instances) do
-			s['set' .. name](s, val)
+			s["set" .. name](s, val)
 		end
 	end
 end
 Source.isLooping = Source.getLooping
+
+-- returns true if at least a single source instance is playing
+function Source:isPlaying()
+	local playing = false
+	for s in pairs(self.instances) do
+		if s:isPlaying() then
+			playing = true
+		end
+	end
+	return playing
+end
 
 --------------------------
 -- love.audio interface --
 --------------------------
 function love.audio.newSource(target, how)
 	local s = {
-		_paused   = false,
-		target    = target,
-		how       = how,
+		_paused = false,
+		target = target,
+		how = how,
 		instances = {},
-		looping   = false,
-		pitch     = 1,
-		volume    = 1,
+		looping = false,
+		pitch = 1,
+		volume = 1,
 	}
-	if how == 'static' and type(target) == 'string' then
+	if how == "static" and type(target) == "string" then
 		s.target = love.sound.newSoundData(target)
 	end
 	love.audio.tags.all[s] = s
@@ -160,7 +183,9 @@ function love.audio.play(source)
 end
 
 function love.audio.stop(source)
-	if source and source.stop then return source:stop() end
+	if source and source.stop then
+		return source:stop()
+	end
 	stop()
 end
 
@@ -180,7 +205,7 @@ end
 
 love.audio.tags = setmetatable({}, {
 	__newindex = error,
-	__index = function(t,k)
+	__index = function(t, k)
 		local tag = setmetatable({}, Tag)
 		rawset(t, k, tag)
 		return tag
